@@ -48,11 +48,11 @@ gh extension remove ghpm
 
 ```bash
 # prints help message
-ghpm --help
+gh ghpm --help
 ```
 
 ```bash
-# turns all your repositories private 
+# turns all your repositories private (except starred repos)
 gh ghpm thanos_snap
 ```
 
