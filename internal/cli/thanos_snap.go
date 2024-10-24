@@ -69,6 +69,14 @@ var thanosSnap = &cobra.Command{
 
 		fmt.Printf("running as %s\n", user.Username)
 
+		var shouldRunAgain bool
+
+		payload := map[string]any{
+			"private": true,
+		}
+
+	run:
+
 		publicRepositoriesGithubAPIEndpoint := fmt.Sprintf("https://api.github.com/users/%s/repos?visibility=public&per_page=100", user.Username)
 
 		httpResponse, err := client.Request(http.MethodGet, publicRepositoriesGithubAPIEndpoint, nil)
@@ -87,7 +95,7 @@ var thanosSnap = &cobra.Command{
 		var namesOfPublicRepositories []string
 
 		for _, repo := range publicRepositories {
-			namesOfPublicRepositories= append(namesOfPublicRepositories, repo.Fullname)
+			namesOfPublicRepositories = append(namesOfPublicRepositories, repo.Fullname)
 		}
 
 		names, err := Prettyfy(namesOfPublicRepositories)
@@ -97,14 +105,6 @@ var thanosSnap = &cobra.Command{
 		}
 
 		fmt.Printf("your public repositories : %s \n", names)
-
-		var shouldRunAgain bool
-
-		payload := map[string]any{
-			"private": true,
-		}
-
-	run:
 
 		// TODO : lobby github for a batch request endpoint, so that it can be only 1 HTTP call and not O(n) HTTP calls
 		for _, repo := range publicRepositories {
