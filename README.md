@@ -8,7 +8,7 @@
 > It does not turn your README repository (username/username) private because it's a special repository meant for public display
 
 > [!NOTE]
-> I am not sponsored by github, nor affiliated, but you can change that by pinging them on social media. And ask for this functionality has been integrated directly into the gh CLI
+> I am not sponsored by github, nor affiliated, but you can change that by pinging them on social media. And ask for this functionality to be integrated directly into the gh CLI
 
 ## Requirements 
 
