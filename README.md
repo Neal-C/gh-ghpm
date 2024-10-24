@@ -59,6 +59,8 @@ gh ghpm thanos_snap
 ## Roadmap
 
 - [x] switch every repositories to private (excluding repos with >= 1 stars)
+- [ ] Lobby github to provide a batch request endpoint, so that it's only 1 HTTPS request and not O(n) HTTPS requests
+- [ ] Lobby github to add this functionality to the gh CLI
 
 ## Contributing
 
