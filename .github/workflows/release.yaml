@@ -1,0 +1,26 @@
+name: Release::gh-ghpm
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  ghpm_build:
+    permissions:
+      # for  creating release & modifying version in-place & pushing tags
+      contents: write 
+      # for generating attestations
+      attestations: write
+      # ...
+      id-token: write
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'clone code into github runner'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: cli/gh-extension-precompile@v2.0.0
+        with:
+          go_version: 1.23.2
+          generate_attestations: true
