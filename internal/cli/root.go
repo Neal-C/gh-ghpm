@@ -11,10 +11,10 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "ghpm",
+	Use:   "gh ghpm",
 	Short: "ghpm is tool to manage privacy on github.",
 	Args:  cobra.ExactArgs(0),
-	Long:  `ghpm is tool to manage privacy on github. And quickly switch all repository to private.`,
+	Long:  `ghpm is tool to manage privacy on github. And quickly switch all repositories to private.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		if version {

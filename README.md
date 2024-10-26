@@ -57,6 +57,14 @@ gh ghpm --help
 gh ghpm thanos_snap
 ```
 
+## Only turn 1 repository private
+
+The github cli already supports turning 1 repository private: https://cli.github.com/manual/gh_repo_edit
+
+```bash
+gh repo edit myusername/myrepository --visibility private
+```
+
 ## Roadmap
 
 - [x] switch every repositories to private (excluding repos with >= 1 stars)

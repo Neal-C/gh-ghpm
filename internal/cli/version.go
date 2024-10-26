@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var Version = "v0.1.3"
+var Version = "v0.1.4"
 
 var versionCmd = &cobra.Command{
-	Use:   "version",
+	Use:   "gh ghpm version",
 	Short: "Shows the version number of ghpm, then exits.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("'%s' (linux/amd64, linux/x86_64, linux/arm64, darwin/arm64, darwin/amd64)\n", Version)
