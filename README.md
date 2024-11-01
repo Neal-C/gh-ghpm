@@ -21,12 +21,6 @@
 gh extension install Neal-C/gh-ghpm
 ```
 
-or fancier
-
-```bash
-gh extension install https://git.github.com/Neal-C/gh-ghpm
-```
-
 List your extensions
 
 ```bash
