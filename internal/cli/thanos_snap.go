@@ -34,7 +34,7 @@ func Prettyfy(data any) (string, error) {
 }
 
 var thanosSnapCmd = &cobra.Command{
-	Use:   "gh ghpm thanos_snap",
+	Use:   "thanos_snap",
 	Short: "Switch all your public repositories to private.",
 	Args:  cobra.NoArgs,
 	Long: heredoc.Docf(`
@@ -89,7 +89,7 @@ var thanosSnapCmd = &cobra.Command{
 			
 			httpResponse.Body.Close()
 
-			var namesOfPublicRepositories []string
+			var namesOfPublicRepositories = make([]string, 0, 100)
 
 			for _, repo := range publicRepositories {
 				namesOfPublicRepositories = append(namesOfPublicRepositories, repo.Fullname)

@@ -11,7 +11,7 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "gh ghpm",
+	Use:   "ghpm",
 	Short: "ghpm is tool to manage privacy on github.",
 	Args:  cobra.ExactArgs(0),
 	Long:  `ghpm is tool to manage privacy on github. And quickly switch all repositories to private.`,
