@@ -71,22 +71,21 @@ var thanosSnapCmd = &cobra.Command{
 		}
 
 		publicRepositoriesGithubAPIEndpoint := fmt.Sprintf("https://api.github.com/users/%s/repos?visibility=public&per_page=100", user.Username)
-		
-		for shouldRun {
 
+		for shouldRun {
 
 			httpResponse, err := client.Request(http.MethodGet, publicRepositoriesGithubAPIEndpoint, nil)
 
 			if err != nil {
 				log.Fatal(err)
 			}
-			
+
 			var publicRepositories []GithubRepository
-			
+
 			if err := json.NewDecoder(httpResponse.Body).Decode(&publicRepositories); err != nil {
 				return err
 			}
-			
+
 			httpResponse.Body.Close()
 
 			var namesOfPublicRepositories = make([]string, 0, 100)
@@ -134,16 +133,25 @@ var thanosSnapCmd = &cobra.Command{
 					continue
 				}
 
-				switch httpResponse.StatusCode {
-				case http.StatusNotImplemented, http.StatusNotFound:
+				switch {
+				case httpResponse.StatusCode == http.StatusNotImplemented:
+
 					log.Printf("%s was not switched to private. I suggest to you try from the web version for this one. I am sorry for failing you, please complain to the developer \n", repo.Fullname)
 
 					httpResponse.Body.Close()
 
 					continue
-				}
 
-				if httpResponse.StatusCode >= 500 {
+				case httpResponse.StatusCode == http.StatusNotFound:
+
+					log.Printf("%s was not switched to private. Because it was not found. Did you misspell?\n", repo.Fullname)
+
+					httpResponse.Body.Close()
+
+					continue
+
+				case httpResponse.StatusCode >= 500:
+
 					log.Printf("github is likely down. Retry. If it does persist: Please complain to the developer \n")
 
 					httpResponse.Body.Close()
