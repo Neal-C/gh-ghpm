@@ -72,12 +72,14 @@ var thanosSnapCmd = &cobra.Command{
 
 		publicRepositoriesGithubAPIEndpoint := fmt.Sprintf("https://api.github.com/users/%s/repos?visibility=public&per_page=100", user.Username)
 
+		readmeRepository := fmt.Sprintf("%s/%s", user.Username, user.Username)
+
 		for shouldRun {
 
 			httpResponse, err := client.Request(http.MethodGet, publicRepositoriesGithubAPIEndpoint, nil)
 
 			if err != nil {
-				log.Fatal(err)
+				return fmt.Errorf("something with the Github API went wrong: %s", err)
 			}
 
 			var publicRepositories []GithubRepository
@@ -106,13 +108,16 @@ var thanosSnapCmd = &cobra.Command{
 			for _, repo := range publicRepositories {
 
 				if repo.Stars >= STARS_THRESHOLD {
+
 					log.Printf("repository %s cannot be switched to private by ghpm because it has more than %d stars (%d exactly) \n", repo.Fullname, STARS_THRESHOLD, repo.Stars)
+
 					continue
 				}
 
-				readmeRepository := fmt.Sprintf("%s/%s", user.Username, user.Username)
-
 				if repo.Fullname == readmeRepository {
+
+					fmt.Printf("dodging the README repository %s because it's a special repository \n", readmeRepository)
+
 					continue
 				}
 
