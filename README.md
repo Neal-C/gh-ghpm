@@ -75,6 +75,7 @@ I am open to random pull requests that do at least 1 of the following :
 - add/improve documentation
 - improve CI/CD
 
+if you're thinking "hmm... I could rewrite it in Rust", I'm waaaay ahead of you : https://github.com/Neal-C/gh-ghpm-rs
 
 ## How to permanently delete or hide data from a repository ?
 
