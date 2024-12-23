@@ -64,8 +64,6 @@ var thanosSnapCmd = &cobra.Command{
 
 		fmt.Printf("running as %s\n", user.Username)
 
-		var shouldRun bool = true
-
 		payload := map[string]any{
 			"private": true,
 		}
@@ -74,7 +72,7 @@ var thanosSnapCmd = &cobra.Command{
 
 		readmeRepository := fmt.Sprintf("%s/%s", user.Username, user.Username)
 
-		for shouldRun {
+		for {
 
 			httpResponse, err := client.Request(http.MethodGet, publicRepositoriesGithubAPIEndpoint, nil)
 
@@ -170,7 +168,9 @@ var thanosSnapCmd = &cobra.Command{
 
 			}
 
-			shouldRun = len(publicRepositories) == 100
+			if len(publicRepositories) != 100 {
+				break
+			}
 
 		}
 
