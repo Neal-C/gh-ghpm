@@ -64,13 +64,19 @@ var thanosSnapCmd = &cobra.Command{
 
 		fmt.Printf("running as %s\n", user.Username)
 
+		publicRepositoriesGithubAPIEndpoint := fmt.Sprintf("https://api.github.com/users/%s/repos?visibility=public&per_page=100", user.Username)
+
+		readmeRepository := fmt.Sprintf("%s/%s", user.Username, user.Username)
+
 		payload := map[string]any{
 			"private": true,
 		}
 
-		publicRepositoriesGithubAPIEndpoint := fmt.Sprintf("https://api.github.com/users/%s/repos?visibility=public&per_page=100", user.Username)
+		jsonPayload, err := json.Marshal(payload)
 
-		readmeRepository := fmt.Sprintf("%s/%s", user.Username, user.Username)
+		if err != nil {
+			return fmt.Errorf("json.Marshal: %s", err)
+		}
 
 		for {
 
@@ -121,18 +127,13 @@ var thanosSnapCmd = &cobra.Command{
 
 				currentPublicRepositoryEndpoint := fmt.Sprintf("https://api.github.com/repos/%s", repo.Fullname)
 
-				jsonPayload, err := json.Marshal(payload)
-
-				if err != nil {
-
-					log.Printf("error processing %s; err=%s \n", repo.Fullname, err)
-
-					continue
-				}
-
 				httpResponse, err := client.RequestWithContext(cmd.Context(), http.MethodPatch, currentPublicRepositoryEndpoint, bytes.NewBuffer(jsonPayload))
 
 				if err != nil {
+
+					log.Printf("error requesting %s: %s \n", repo.Fullname, err)
+					log.Println("skipping", repo.Fullname)
+
 					continue
 				}
 
