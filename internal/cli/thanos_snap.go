@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/MakeNowJust/heredoc"
 	"github.com/cli/go-gh/v2/pkg/api"
@@ -108,6 +109,8 @@ var thanosSnapCmd = &cobra.Command{
 
 			fmt.Printf("your public repositories : %s \n", names)
 
+			switchWaitGroup := new(sync.WaitGroup)
+
 			// TODO : lobby github for a batch request endpoint, so that it can be only 1 HTTP call and not O(n) HTTP calls
 			for _, repo := range publicRepositories {
 
@@ -125,49 +128,62 @@ var thanosSnapCmd = &cobra.Command{
 					continue
 				}
 
-				currentPublicRepositoryEndpoint := fmt.Sprintf("https://api.github.com/repos/%s", repo.Fullname)
+				switchWaitGroup.Add(1)
 
-				httpResponse, err := client.RequestWithContext(cmd.Context(), http.MethodPatch, currentPublicRepositoryEndpoint, bytes.NewBuffer(jsonPayload))
+				go func() {
 
-				if err != nil {
+					currentPublicRepositoryEndpoint := fmt.Sprintf("https://api.github.com/repos/%s", repo.Fullname)
 
-					log.Printf("error requesting %s: %s \n", repo.Fullname, err)
-					log.Println("skipping", repo.Fullname)
+					httpResponse, err := client.RequestWithContext(cmd.Context(), http.MethodPatch, currentPublicRepositoryEndpoint, bytes.NewBuffer(jsonPayload))
 
-					continue
-				}
+					if err != nil {
 
-				switch {
-				case httpResponse.StatusCode == http.StatusNotImplemented:
+						log.Printf("error requesting %s: %s \n", repo.Fullname, err)
+						log.Println("skipping", repo.Fullname)
 
-					log.Printf("%s was not switched to private. I suggest to you try from the web version for this one. I am sorry for failing you, please complain to the developer \n", repo.Fullname)
+						switchWaitGroup.Done()
 
-					httpResponse.Body.Close()
-
-					continue
-
-				case httpResponse.StatusCode == http.StatusNotFound:
-
-					log.Printf("%s was not switched to private. Because it was not found. Did you misspell?\n", repo.Fullname)
+						return
+					}
 
 					httpResponse.Body.Close()
 
-					continue
+					switch {
+					case httpResponse.StatusCode == http.StatusNotImplemented:
 
-				case httpResponse.StatusCode >= 500:
+						log.Printf("%s was not switched to private. I suggest to you try from the web version for this one. I am sorry for failing you, please complain to the developer \n", repo.Fullname)
 
-					log.Printf("github is likely down. Retry. If it does persist: Please complain to the developer \n")
+						switchWaitGroup.Done()
 
-					httpResponse.Body.Close()
+						return
 
-					continue
-				}
+					case httpResponse.StatusCode == http.StatusNotFound:
 
-				log.Printf("%s switched to private. \n", repo.Fullname)
+						log.Printf("%s was not switched to private. Because it was not found. Did you misspell?\n", repo.Fullname)
 
-				httpResponse.Body.Close()
+						switchWaitGroup.Done()
+
+						return
+
+					case httpResponse.StatusCode >= 500:
+
+						log.Printf("%s was not switched to private. github is likely down. Retry. If it does persist: Please complain to the developer \n", repo.Fullname)
+
+						switchWaitGroup.Done()
+
+						return
+
+					}
+
+					log.Printf("%s switched to private. \n", repo.Fullname)
+
+					switchWaitGroup.Done()
+
+				}()
 
 			}
+
+			switchWaitGroup.Wait()
 
 			if len(publicRepositories) != 100 {
 				break
