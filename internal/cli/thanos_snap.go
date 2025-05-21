@@ -153,29 +153,19 @@ var thanosSnapCmd = &cobra.Command{
 
 						log.Printf("%s was not switched to private. I suggest to you try from the web version for this one. I am sorry for failing you, please complain to the developer \n", repo.Fullname)
 
-						switchWaitGroup.Done()
-
-						return
-
 					case httpResponse.StatusCode == http.StatusNotFound:
 
 						log.Printf("%s was not switched to private. Because it was not found. Did you misspell?\n", repo.Fullname)
-
-						switchWaitGroup.Done()
-
-						return
 
 					case httpResponse.StatusCode >= 500:
 
 						log.Printf("%s was not switched to private. github is likely down. Retry. If it does persist: Please complain to the developer \n", repo.Fullname)
 
-						switchWaitGroup.Done()
+					default:
 
-						return
+						log.Printf("%s switched to private. \n", repo.Fullname)
 
 					}
-
-					log.Printf("%s switched to private. \n", repo.Fullname)
 
 					switchWaitGroup.Done()
 
