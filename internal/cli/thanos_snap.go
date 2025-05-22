@@ -24,6 +24,8 @@ type GithubRepository struct {
 	Stars uint `json:"stargazers_count"`
 
 	Fullname string `json:"full_name"`
+
+	IsFork bool `json:"fork"`
 }
 
 func Prettyfy(data any) (string, error) {
@@ -114,6 +116,13 @@ var thanosSnapCmd = &cobra.Command{
 			// TODO : lobby github for a batch request endpoint, so that it can be only 1 HTTP call and not O(n) HTTP calls
 			for _, repo := range publicRepositories {
 
+				if repo.Fullname == readmeRepository {
+
+					log.Printf("skipping %s because it's a special repository \n", readmeRepository)
+
+					continue
+				}
+
 				if repo.Stars >= STARS_THRESHOLD {
 
 					log.Printf("repository %s cannot be switched to private by ghpm because it has more than %d stars (%d exactly) \n", repo.Fullname, STARS_THRESHOLD, repo.Stars)
@@ -121,9 +130,9 @@ var thanosSnapCmd = &cobra.Command{
 					continue
 				}
 
-				if repo.Fullname == readmeRepository {
+				if repo.IsFork {
 
-					fmt.Printf("dodging the README repository %s because it's a special repository \n", readmeRepository)
+					log.Printf("skipped %s because it's a fork \n", repo.Fullname)
 
 					continue
 				}

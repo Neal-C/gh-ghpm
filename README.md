@@ -5,7 +5,7 @@
 > Current forks will remain public and will be detached from the repository.
 
 > [!IMPORTANT]
-> if it has >= 1 stars, ghpm does not turn a starred repository into a private repository.  
+> if it has >= 1 stars or is a fork, ghpm does not turn the repository into a private repository.  
 > It does not turn your README repository (username/username) private because it's a special repository meant for public display
 
 > [!NOTE]
