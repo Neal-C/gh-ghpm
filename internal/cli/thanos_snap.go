@@ -38,17 +38,17 @@ func Prettyfy(data any) (string, error) {
 
 var thanosSnapCmd = &cobra.Command{
 	Use:   "thanos_snap",
-	Short: "Switch all your public repositories to private.",
+	Short: "Switch all your non-starred and non-fork public repositories to private.",
 	Args:  cobra.NoArgs,
 	Long: heredoc.Docf(`
-		Switch all your public repositories to private.
+		Switch all your non-starred and non-fork public repositories to private.
 
-		By default, starred repositories with 1 stars are not turned private.
+		By default, starred repositories with 1 stars and forks are not turned private.
 	`, "`"),
 	Example: heredoc.Doc(`
-		# request all your public repositories to turn private, except if they have stars
+		# request all your non-starred and non-fork public repositories to turn private
 		
-		$ ghpm thanos_snap
+		$ gh ghpm thanos_snap
 		`),
 	RunE: func(cmd *cobra.Command, args []string) error {
 
